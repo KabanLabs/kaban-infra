@@ -1,7 +1,7 @@
 export const environment = {
   production: true,
   resourceApiUrl: 'http://localhost:5000/api/v1',
-  authServiceUrl: 'http://localhost:8000/auth',
+  authServiceUrl: 'http://localhost:8000',
   wsUrl: 'ws://localhost:8888/ws',
   wsUseAuthHeader: false,
   wsQueueMessages: false,
