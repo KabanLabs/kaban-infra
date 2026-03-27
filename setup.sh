@@ -25,6 +25,9 @@ for REPO in "${REPOS[@]}"; do
     fi
 done
 
+echo ">>> Копируем конфиг фронтенда..."
+cp configs/front/environment.production.ts kaban-front/src/environments/environment.production.ts
+
 echo ">>> Запускаем инфраструктуру (docker compose up -d --build)..."
 # Отключаем set -e для ручной обработки ошибки docker compose
 set +e
