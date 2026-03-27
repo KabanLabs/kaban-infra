@@ -1,0 +1,141 @@
+version: '3.8'
+
+services:
+  # ==========================================
+  # ФРОНТЕНД
+  # ==========================================
+  kaban-front:
+    build:
+      context: ./kaban-front
+    ports:
+      - "3000:80"
+    restart: unless-stopped
+    depends_on:
+      - kaban-nest-service
+
+  # ==========================================
+  # NEST BACKEND + INFRASTRUCTURE
+  # ==========================================
+  kaban-nest-service:
+    build:
+      context: ./kaban-nest-service
+    ports:
+      - "5000:5000"
+    env_file:
+      - ./configs/nest-service/.prod.env
+    environment:
+      - DB_HOST=postgres-nest
+      - DB_PORT=5432
+      # Остальные переменные окружения прокидываются из Nest-кода или .env файла
+    restart: unless-stopped
+    depends_on:
+      postgres-nest:
+        condition: service_healthy
+
+  postgres-nest:
+    image: postgres:16
+    container_name: postgres-nest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: "Strong!Pass123"
+      POSTGRES_DB: mydatabase
+      POSTGRES_HOST_AUTH_METHOD: "scram-sha-256"
+      POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256 --auth-local=scram-sha-256"
+      POSTGRES_INITDB_LOCALE: "en_US.UTF-8"
+      LC_ALL: "en_US.UTF-8"
+      TZ: "UTC"
+    volumes:
+      - postgres_nest_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d mydatabase"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  directus:
+    image: directus/directus:latest
+    container_name: directus
+    environment:
+      DB_CLIENT: pg
+      DB_CONNECTION_STRING: postgres://postgres:Strong!Pass123@postgres-nest:5432/mydatabase
+      ADMIN_EMAIL: admin@example.com
+      ADMIN_PASSWORD: "Admin!Pass123"
+      ADMIN_FIRSTNAME: "Admin"
+      ADMIN_LASTNAME: "User"
+      DIRECTUS_HOST: "http://localhost:8055"
+      TZ: "UTC"
+    ports:
+      - "8055:8055"
+    depends_on:
+      postgres-nest:
+        condition: service_healthy
+    restart: unless-stopped
+
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    volumes:
+      - minio_data:/data
+    command: server /data --console-address ":9001"
+    restart: always
+
+  # ==========================================
+  # GO MICROSERVICES + INFRASTRUCTURE
+  # ==========================================
+  kaban-go-auth-service:
+    build:
+      context: ./kaban-go-auth-service
+    ports:
+      - "5055:5055" # gRPC
+      - "8000:8000" # HTTP
+    environment:
+      - CONFIG_PATH=/app/config/config.yaml
+    volumes:
+      - ./configs/go-auth/config.yaml:/app/config/config.yaml
+    restart: unless-stopped
+    depends_on:
+      postgres-auth:
+        condition: service_healthy
+
+  kaban-go-service:
+    build:
+      context: ./kaban-go-service
+    ports:
+      - "8888:8888" # WS/HTTP
+    environment:
+      - CONFIG_PATH=/app/config/config.yaml
+    volumes:
+      - ./configs/go-service/config.yaml:/app/config/config.yaml
+    restart: unless-stopped
+
+  postgres-auth:
+    image: postgres:latest
+    container_name: postgres-auth
+    environment:
+      POSTGRES_USER: sso_user
+      POSTGRES_PASSWORD: sso_db_password
+      POSTGRES_DB: sso
+    volumes:
+      - postgres_auth_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432" # Порт смещен на 5433, чтобы избежать конфликта с nest-postgres (5432) на хосте. Внутри докер-сети порт 5432
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sso_user -d sso"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  postgres_nest_data:
+  postgres_auth_data:
+  minio_data:

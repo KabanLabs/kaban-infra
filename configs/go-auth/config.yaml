@@ -1,0 +1,19 @@
+env: "local" # dev
+access_token_ttl: 100000s
+refresh_token_ttl: 2h
+private_key_ttl: 1440h
+
+grpc:
+  port: 5055
+  timeout: 10h
+
+http:
+  port: 8000
+  enable_cors: true
+
+pg_config:
+  port: 5432
+  user: postgres
+  password: Strong!Pass123
+  host: 127.0.0.1
+  db_name: sso
