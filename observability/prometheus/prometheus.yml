@@ -12,7 +12,8 @@ scrape_configs:
     static_configs:
       - targets: ['kaban-nest-service:5000']
     http_headers:
-      x-api-key: '12345'
+      x-api-key:
+        secrets: ['12345']
 
   - job_name: 'kaban-go-auth-service'
     metrics_path: '/metrics'
