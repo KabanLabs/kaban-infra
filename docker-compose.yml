@@ -47,7 +47,7 @@ services:
       LC_ALL: "en_US.UTF-8"
       TZ: "UTC"
     volumes:
-      - postgres_nest_data:/var/lib/postgresql/data
+      - ./postgres_nest_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     healthcheck:
@@ -86,7 +86,7 @@ services:
       MINIO_ROOT_USER: minioadmin
       MINIO_ROOT_PASSWORD: minioadmin
     volumes:
-      - minio_data:/data
+      - ./minio_data:/data
     command: server /data --console-address ":9001"
     restart: always
 
@@ -134,7 +134,7 @@ services:
       POSTGRES_PASSWORD: sso_db_password
       POSTGRES_DB: sso
     volumes:
-      - postgres_auth_data:/var/lib/postgresql/data
+      - ./postgres_auth_data:/var/lib/postgresql/data
     ports:
       - "5433:5432" # Порт смещен на 5433, чтобы избежать конфликта с nest-postgres (5432) на хосте. Внутри докер-сети порт 5432
     healthcheck:
