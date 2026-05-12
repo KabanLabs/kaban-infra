@@ -74,12 +74,17 @@ services:
         condition: service_healthy
 
   postgres-auth:
-    image: postgres:latest
+    image: postgres:16
     container_name: postgres-auth
     environment:
       POSTGRES_USER: sso_user
       POSTGRES_PASSWORD: sso_db_password
       POSTGRES_DB: sso
+      POSTGRES_HOST_AUTH_METHOD: "scram-sha-256"
+      POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256 --auth-local=scram-sha-256"
+      POSTGRES_INITDB_LOCALE: "en_US.UTF-8"
+      LC_ALL: "en_US.UTF-8"
+      TZ: "UTC"
     volumes:
       - postgres_auth_data:/var/lib/postgresql/data
     healthcheck:
