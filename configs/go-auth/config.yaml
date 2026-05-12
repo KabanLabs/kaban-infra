@@ -17,3 +17,4 @@ pg_config:
   password: sso_db_password
   host: postgres-auth
   db_name: sso
+  ssl_mode: disable

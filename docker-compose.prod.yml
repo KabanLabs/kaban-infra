@@ -36,6 +36,7 @@ services:
   kaban-nest-service:
     build:
       context: ./kaban-nest-service
+    container_name: kaban-nest-service
     env_file:
       - ./configs/nest-service/.prod.env
     restart: unless-stopped
@@ -64,6 +65,7 @@ services:
   kaban-go-auth-service:
     build:
       context: ./kaban-go-auth-service
+    container_name: kaban-go-auth-service
     environment:
       - CONFIG_PATH=/app/config/config.yaml
     volumes:
