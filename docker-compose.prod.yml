@@ -99,6 +99,7 @@ services:
   kaban-go-service:
     build:
       context: ./kaban-go-service
+    container_name: kaban-go-service
     environment:
       - CONFIG_PATH=/app/config/config.yaml
     volumes:
