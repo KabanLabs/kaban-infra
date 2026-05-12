@@ -1,8 +1,8 @@
 export const environment = {
   production: true,
-  resourceApiUrl: 'http://localhost:5000/api/v1',
-  authServiceUrl: 'http://localhost:8000',
-  wsUrl: 'ws://localhost:8888/ws',
+  resourceApiUrl: 'https://REPLACE_ME_DOMAIN/api/nest',
+  authServiceUrl: 'https://REPLACE_ME_DOMAIN/api/auth',
+  wsUrl: 'wss://REPLACE_ME_DOMAIN/api/go/ws',
   wsUseAuthHeader: false,
   wsQueueMessages: false,
   wsMaxRetryAttempts: 5,
