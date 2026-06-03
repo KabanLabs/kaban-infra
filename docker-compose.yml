@@ -91,6 +91,7 @@ services:
       MINIO_ROOT_PASSWORD: minioadmin
       MINIO_NOTIFY_WEBHOOK_ENABLE_nest: "on"
       MINIO_NOTIFY_WEBHOOK_ENDPOINT_nest: "http://kaban-nest-service:5000/api/v1/webhooks/s3"
+      MINIO_NOTIFY_WEBHOOK_AUTH_TOKEN_nest: "Bearer: 123456789"
     volumes:
       - ./minio_data:/data
     command: server /data --console-address ":9001"
