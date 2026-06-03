@@ -109,7 +109,9 @@ services:
       sleep 5;
       /usr/bin/mc alias set myminio http://minio:9000 minioadmin minioadmin;
       /usr/bin/mc mb myminio/kaban-attachments --ignore-existing;
+      /usr/bin/mc mb myminio/kaban-public --ignore-existing;
       /usr/bin/mc event add myminio/kaban-attachments arn:minio:sqs::nest:webhook --event put;
+      /usr/bin/mc event add myminio/kaban-public arn:minio:sqs::nest:webhook --event put;
       exit 0;
       "
 
