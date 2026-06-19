@@ -1,7 +1,11 @@
 env: 'prod'
+auth:
+  address: "kaban-go-auth-service:5055"
+  timeout: "5s"
 ws:
   port: 8888
   ws-max-message-size: 1048576
   ws-send-buffer-size: 256
 http:
   enable_cors: true
+  api_key: "dev-secret-key"
