@@ -153,7 +153,7 @@ services:
     restart: unless-stopped
 
   postgres-auth:
-    image: postgres:latest
+    image: postgres:16
     container_name: postgres-auth
     environment:
       POSTGRES_USER: sso_user
